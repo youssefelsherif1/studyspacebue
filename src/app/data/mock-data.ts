@@ -76,7 +76,7 @@ export const mockRooms: Room[] = [
     },
     status: 'available',
     image: 'study-room-quiet',
-    pricePerHour: 250,
+    pricePerHour: 150,
   },
   {
     id: '2',
@@ -92,7 +92,7 @@ export const mockRooms: Room[] = [
     status: 'booked',
     availableAt: '6:00 PM',
     image: 'meeting-room-modern',
-    pricePerHour: 750,
+    pricePerHour: 450,
   },
   {
     id: '3',
@@ -107,7 +107,7 @@ export const mockRooms: Room[] = [
     },
     status: 'available',
     image: 'outdoor-terrace-study',
-    pricePerHour: 400,
+    pricePerHour: 250,
   },
   {
     id: '4',
@@ -122,7 +122,7 @@ export const mockRooms: Room[] = [
     },
     status: 'available',
     image: 'study-pod-modern',
-    pricePerHour: 300,
+    pricePerHour: 180,
   },
   {
     id: '5',
@@ -137,7 +137,7 @@ export const mockRooms: Room[] = [
     },
     status: 'available',
     image: 'conference-room-large',
-    pricePerHour: 1000,
+    pricePerHour: 550,
   },
   {
     id: '6',
@@ -153,7 +153,7 @@ export const mockRooms: Room[] = [
     status: 'booked',
     availableAt: '4:30 PM',
     image: 'quiet-workspace',
-    pricePerHour: 250,
+    pricePerHour: 150,
   },
   {
     id: '7',
@@ -168,7 +168,7 @@ export const mockRooms: Room[] = [
     },
     status: 'available',
     image: 'rooftop-lounge',
-    pricePerHour: 600,
+    pricePerHour: 350,
   },
   {
     id: '8',
@@ -183,7 +183,7 @@ export const mockRooms: Room[] = [
     },
     status: 'available',
     image: 'tech-lab-modern',
-    pricePerHour: 900,
+    pricePerHour: 550,
   },
 ];
 

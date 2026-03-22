@@ -30,11 +30,31 @@ export function ProfilePage() {
           <div className="h-32 bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6]" />
           <div className="px-8 pb-8">
             <div className="flex items-end gap-6 -mt-12">
-              <Avatar className="w-24 h-24 border-4 border-white dark:border-[#1f2937] shadow-xl">
-                <AvatarFallback className="bg-gradient-to-br from-[#4f46e5] to-[#8b5cf6] text-white text-3xl font-bold">
-                  {user.name.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
+              <div className="relative group">
+                <Avatar className="w-24 h-24 border-4 border-white dark:border-[#1f2937] shadow-xl">
+                  {user.avatar ? (
+                     <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <AvatarFallback className="bg-gradient-to-br from-[#4f46e5] to-[#8b5cf6] text-white text-3xl font-bold">
+                      {user.name.charAt(0)}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <label className="absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 group-hover:opacity-100 rounded-full cursor-pointer transition-opacity">
+                  <input type="file" className="hidden" onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        // In a real app, upload to server. Here we'll just update local state if possible
+                        alert('Picture upload simulation: In a full implementation, this image would be saved to your profile.');
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }} />
+                  <span className="text-xs font-medium">Update</span>
+                </label>
+              </div>
               <div className="pb-2">
                 <h1 className={`text-2xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>{user.name}</h1>
                 <Badge className="mt-1 capitalize bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6]">{user.role}</Badge>
@@ -69,7 +89,7 @@ export function ProfilePage() {
           <Card className={`${dark ? 'border-[#374151] bg-[#1f2937]' : 'border-[#e5e7eb]'} text-center`}>
             <CardContent className="pt-6 pb-4">
               <DollarSign className="w-8 h-8 text-[#10b981] mx-auto mb-2" />
-              <div className={`text-2xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>${totalSpent}</div>
+              <div className={`text-2xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>{totalSpent} EGP</div>
               <div className={`text-xs ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'}`}>Total Spent</div>
             </CardContent>
           </Card>
@@ -207,7 +227,7 @@ export function ProfilePage() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className={`font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>${sub.amount}/mo</div>
+                        <div className={`font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>{sub.amount} EGP/mo</div>
                         <Badge className="mt-1 bg-[#10b981] text-xs">{sub.status}</Badge>
                       </div>
                     </div>

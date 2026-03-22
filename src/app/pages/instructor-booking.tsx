@@ -4,7 +4,7 @@ import { DashboardLayout } from '../components/dashboard-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
-import { Calendar, Clock, MapPin, Users, Monitor, Wind, Sparkles, Check, Repeat, BookOpen, AlertTriangle } from 'lucide-react';
+import { Clock, Users, Monitor, Wind, Sparkles, Check, Repeat, BookOpen, AlertTriangle } from 'lucide-react';
 import { mockRooms, timeSlots } from '../data/mock-data';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { useAuth } from '../context/AuthContext';
@@ -265,7 +265,7 @@ export function InstructorBookingPage() {
                           </div>
                           <div className="mt-auto flex justify-between items-end">
                             <Badge variant="outline" className="text-[10px] capitalize">{room.type}</Badge>
-                            <span className="font-bold text-[#8b5cf6] text-sm">${room.pricePerHour}/hr</span>
+                            <span className="font-bold text-[#8b5cf6] text-sm">{room.pricePerHour} EGP/hr</span>
                           </div>
                         </div>
                       </div>

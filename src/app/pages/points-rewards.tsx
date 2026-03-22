@@ -6,12 +6,14 @@ import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { Award, Clock, Coffee, Droplet, Percent, TrendingUp, Gift, Star } from 'lucide-react';
-import { mockUsers, mockRewards } from '../data/mock-data';
+import { useAuth } from '../context/AuthContext';
 
 export function PointsRewardsPage() {
-  const currentUser = mockUsers[0];
+  const { user: currentUser } = useAuth();
   const [selectedReward, setSelectedReward] = useState<typeof mockRewards[0] | null>(null);
   const [showRedeemDialog, setShowRedeemDialog] = useState(false);
+
+  if (!currentUser) return null;
 
   const handleRedeem = (reward: typeof mockRewards[0]) => {
     setSelectedReward(reward);

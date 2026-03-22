@@ -155,7 +155,7 @@ export function LandingPage() {
             <div className="bg-white rounded-2xl border border-[#e5e7eb] p-8 hover:shadow-xl transition-shadow">
               <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">Quiet Pods</h3>
               <div className="mb-6">
-                <span className="text-4xl font-bold text-[#1a1a2e]">$5</span>
+                <span className="text-4xl font-bold text-[#1a1a2e]">150 EGP</span>
                 <span className="text-[#6b7280]">/hour</span>
               </div>
               <ul className="space-y-3 mb-8">
@@ -187,7 +187,7 @@ export function LandingPage() {
               </div>
               <h3 className="text-2xl font-semibold mb-2">Group Rooms</h3>
               <div className="mb-6">
-                <span className="text-4xl font-bold">$15</span>
+                <span className="text-4xl font-bold">450 EGP</span>
                 <span className="text-white/80">/hour</span>
               </div>
               <ul className="space-y-3 mb-8">
@@ -216,7 +216,7 @@ export function LandingPage() {
             <div className="bg-white rounded-2xl border border-[#e5e7eb] p-8 hover:shadow-xl transition-shadow">
               <h3 className="text-2xl font-semibold text-[#1a1a2e] mb-2">Outdoor Spaces</h3>
               <div className="mb-6">
-                <span className="text-4xl font-bold text-[#1a1a2e]">$8</span>
+                <span className="text-4xl font-bold text-[#1a1a2e]">250 EGP</span>
                 <span className="text-[#6b7280]">/hour</span>
               </div>
               <ul className="space-y-3 mb-8">

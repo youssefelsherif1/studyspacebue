@@ -209,9 +209,11 @@ export function StudentDashboard() {
                     {session.timeSlot}
                   </div>
                 </div>
-                <Button className="w-full bg-[#4f46e5] hover:bg-[#4f46e5]/90">
-                  Join Session
-                </Button>
+                {session.status === 'active' && (
+                  <Button className="w-full bg-[#4f46e5] hover:bg-[#4f46e5]/90">
+                    Join Session
+                  </Button>
+                )}
               </div>
             ))}
           </CardContent>
