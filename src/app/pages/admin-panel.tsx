@@ -156,13 +156,13 @@ export function AdminPanel() {
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-medium text-[#6b7280]">Today's Revenue</CardTitle>
-                <DollarSign className="w-4 h-4 text-[#6b7280]" />
+                <TrendingUp className="w-4 h-4 text-[#6b7280]" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-3xl font-bold text-[#1a1a2e]">${statsData.todayRevenue}</div>
+                  <div className="text-3xl font-bold text-[#1a1a2e]">{statsData.todayRevenue} EGP</div>
                   <div className="flex items-center gap-1 mt-1">
                     <TrendingUp className="w-4 h-4 text-[#10b981]" />
                     <span className="text-xs text-[#10b981]">+12.5%</span>
@@ -176,13 +176,13 @@ export function AdminPanel() {
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-medium text-[#6b7280]">Monthly Revenue</CardTitle>
-                <DollarSign className="w-4 h-4 text-[#6b7280]" />
+                <TrendingUp className="w-4 h-4 text-[#6b7280]" />
               </div>
             </CardHeader>
             <CardContent>
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-3xl font-bold text-[#1a1a2e]">${statsData.monthlyRevenue.toLocaleString()}</div>
+                  <div className="text-3xl font-bold text-[#1a1a2e]">{statsData.monthlyRevenue.toLocaleString()} EGP</div>
                   <div className="flex items-center gap-1 mt-1">
                     <TrendingUp className="w-4 h-4 text-[#10b981]" />
                     <span className="text-xs text-[#10b981]">+8.2%</span>
@@ -418,7 +418,7 @@ export function AdminPanel() {
                   </div>
                   <div className="flex items-center justify-between p-4 bg-[#f9fafb] rounded-lg">
                     <span className="text-sm text-[#6b7280]">Revenue/Room</span>
-                    <span className="text-lg font-bold text-[#1a1a2e]">$425</span>
+                    <span className="text-lg font-bold text-[#1a1a2e]">425 EGP</span>
                   </div>
                 </div>
               </div>
@@ -461,7 +461,7 @@ export function AdminPanel() {
                         <TableCell>{booking.userName}</TableCell>
                         <TableCell>{booking.roomName}</TableCell>
                         <TableCell className="text-sm text-[#6b7280]">{booking.timeSlot}</TableCell>
-                        <TableCell className="font-semibold">${booking.amount}</TableCell>
+                        <TableCell className="font-semibold">{booking.amount} EGP</TableCell>
                         <TableCell>
                           <Badge 
                             variant={booking.status === 'confirmed' ? 'default' : 'secondary'}
@@ -636,7 +636,7 @@ export function AdminPanel() {
                           <Badge variant="outline">{room.type}</Badge>
                         </TableCell>
                         <TableCell>{room.capacity} people</TableCell>
-                        <TableCell className="font-semibold">${room.pricePerHour}/hr</TableCell>
+                        <TableCell className="font-semibold">{room.pricePerHour} EGP/hr</TableCell>
                         <TableCell>
                           <Badge 
                             variant={room.status === 'available' ? 'default' : 'secondary'}

@@ -289,7 +289,7 @@ export function BookingPage() {
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className={`text-xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>${room.pricePerHour}</div>
+                              <div className={`text-xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>{room.pricePerHour} EGP</div>
                               <div className={`text-xs ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'}`}>per hour</div>
                             </div>
                           </div>

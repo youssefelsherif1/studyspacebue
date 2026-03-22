@@ -18,19 +18,19 @@ export function LandingPage() {
             <span className="text-xl font-semibold text-[#1a1a2e]">StudySpace</span>
           </div>
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-[#6b7280] hover:text-[#1a1a2e] transition-colors">Features</a>
-            <a href="#pricing" className="text-[#6b7280] hover:text-[#1a1a2e] transition-colors">Pricing</a>
+            <a href="#features" className="text-[#6b7280] hover:text-[#1a1a2e] transition-colors scroll-smooth">Features</a>
+            <a href="#pricing" className="text-[#6b7280] hover:text-[#1a1a2e] transition-colors scroll-smooth">Pricing</a>
             {user ? (
               <Link to={user.role === 'student' ? '/student' : user.role === 'instructor' ? '/instructor' : user.role === 'admin' ? '/admin' : '/receptionist'}>
-                <Button className="bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6] hover:opacity-90">Dashboard</Button>
+                <Button className="bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6] hover:opacity-90 shadow-lg hover:shadow-xl transition-shadow">Dashboard</Button>
               </Link>
             ) : (
               <>
                 <Link to="/auth">
-                  <Button variant="outline" className="border-[#e5e7eb]">Sign In</Button>
+                  <Button variant="outline" className="border-[#e5e7eb] hover:border-[#4f46e5] hover:text-[#4f46e5] transition-colors">Sign In</Button>
                 </Link>
                 <Link to="/auth">
-                  <Button className="bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6] hover:opacity-90">Get Started</Button>
+                  <Button className="bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6] hover:opacity-90 shadow-lg hover:shadow-xl transition-shadow">Get Started</Button>
                 </Link>
               </>
             )}
@@ -41,12 +41,12 @@ export function LandingPage() {
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-6 py-20 md:py-32">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#e0e7ff] rounded-full mb-6">
+          <div className="space-y-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#e0e7ff] rounded-full mb-6 animate-pulse">
               <Zap className="w-4 h-4 text-[#4f46e5]" />
               <span className="text-sm text-[#4f46e5] font-medium">Smart Study Space Management</span>
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold text-[#1a1a2e] mb-6 leading-tight">
+            <h1 className="text-5xl md:text-6xl font-bold text-[#1a1a2e] mb-6 leading-tight bg-gradient-to-r from-[#1a1a2e] to-[#4f46e5] bg-clip-text text-transparent">
               Your Perfect Study Space Awaits
             </h1>
             <p className="text-xl text-[#6b7280] mb-8 leading-relaxed">

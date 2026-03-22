@@ -88,7 +88,7 @@ export function ProfilePage() {
           </Card>
           <Card className={`${dark ? 'border-[#374151] bg-[#1f2937]' : 'border-[#e5e7eb]'} text-center`}>
             <CardContent className="pt-6 pb-4">
-              <DollarSign className="w-8 h-8 text-[#10b981] mx-auto mb-2" />
+              <TrendingUp className="w-8 h-8 text-[#10b981] mx-auto mb-2" />
               <div className={`text-2xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>{totalSpent} EGP</div>
               <div className={`text-xs ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'}`}>Total Spent</div>
             </CardContent>

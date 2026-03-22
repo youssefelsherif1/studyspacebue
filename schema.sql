@@ -70,17 +70,17 @@ INSERT INTO Users (Name, Email, Role, Points, University) VALUES
 
 -- Seed Rooms
 INSERT INTO Rooms (RoomName, Capacity, PricePerHour, IsActive) VALUES 
-('Quiet Zone 1', 1, 5.00, 1),
-('Quiet Zone 2', 1, 5.00, 1),
-('Group Room A', 4, 15.00, 1),
-('Seminar Room', 20, 50.00, 1),
+('Quiet Zone 1', 1, 150.00, 1),
+('Quiet Zone 2', 1, 150.00, 1),
+('Group Room A', 4, 450.00, 1),
+('Seminar Room', 20, 550.00, 1),
 ('Instructor Office', 2, 0.00, 1);
 
 -- Seed Payments
 INSERT INTO Payments (Amount, PaymentDate, Method) VALUES 
-(15.00, '2026-03-21 09:00:00', 'Credit Card'),
-(5.00, '2026-03-21 10:30:00', 'Points'),
-(50.00, '2026-03-22 08:00:00', 'Credit Card'),
+(450.00, '2026-03-21 09:00:00', 'Credit Card'),
+(150.00, '2026-03-21 10:30:00', 'Points'),
+(550.00, '2026-03-22 08:00:00', 'Credit Card'),
 (0.00, '2026-03-20 14:00:00', 'Free Sub');
 
 -- Seed Subscriptions

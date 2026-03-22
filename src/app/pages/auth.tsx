@@ -10,15 +10,21 @@ import { useAuth } from '../context/AuthContext';
 
 export function AuthPage() {
   const navigate = useNavigate();
-  const { login, signup, user } = useAuth();
+  const { login, signup, user, sendEmailVerification, verifyEmail } = useAuth();
   const [selectedRole, setSelectedRole] = useState<'student' | 'instructor'>('student');
   const [signInEmail, setSignInEmail] = useState('');
+  const [signInPassword, setSignInPassword] = useState('');
   const [signUpName, setSignUpName] = useState('');
   const [signUpEmail, setSignUpEmail] = useState('');
+  const [signUpPassword, setSignUpPassword] = useState('');
   const [signUpUniversity, setSignUpUniversity] = useState('');
   const [showBonus, setShowBonus] = useState(false);
   const [activeTab, setActiveTab] = useState('signin');
   const [signupPrompt, setSignupPrompt] = useState('');
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [verificationEmail, setVerificationEmail] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Redirection is now handled by useEffect to avoid "white page" flashes
   useEffect(() => {
@@ -63,8 +69,8 @@ export function AuthPage() {
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
-    const password = (e.target as any).elements['signin-password']?.value;
-    const result = login(signInEmail, password);
+    setLoading(true);
+    const result = login(signInEmail, signInPassword);
     
     if (result.success) {
       setSignupPrompt('');
@@ -76,19 +82,62 @@ export function AuthPage() {
       // Account not found or pending
       if (result.message && result.message.includes('pending')) {
         setSignupPrompt(result.message);
+      } else if (result.message && result.message.includes('verify')) {
+        setVerificationEmail(signInEmail);
+        setShowEmailVerification(true);
+        setSignupPrompt(result.message);
       } else {
         setSignUpEmail(signInEmail); // Pre-fill their email
         setSignupPrompt(result.message || 'Account not found! Please create your account first.');
         setActiveTab('signup');
       }
     }
+    setLoading(false);
   };
 
   const handleSignUp = (e: React.FormEvent) => {
     e.preventDefault();
-    signup(signUpName, signUpEmail, selectedRole, selectedRole === 'student' ? signUpUniversity : undefined);
-    setSignupPrompt('');
-    setShowBonus(true);
+    setLoading(true);
+    const result = signup(signUpName, signUpEmail, selectedRole, signUpPassword, selectedRole === 'student' ? signUpUniversity : undefined);
+    
+    if (result.success) {
+      if (result.message && result.message.includes('verification')) {
+        setVerificationEmail(signUpEmail);
+        setShowEmailVerification(true);
+        setSignupPrompt(result.message);
+      } else {
+        setSignupPrompt('');
+        setShowBonus(true);
+      }
+    } else {
+      setSignupPrompt(result.message || 'Signup failed!');
+    }
+    setLoading(false);
+  };
+
+  const handleEmailVerification = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const result = verifyEmail(verificationEmail, verificationCode);
+    
+    if (result.success) {
+      setSignupPrompt(result.message || 'Email verified successfully!');
+      setShowEmailVerification(false);
+      setVerificationCode('');
+      setActiveTab('signin');
+    } else {
+      setSignupPrompt(result.message || 'Verification failed!');
+    }
+    setLoading(false);
+  };
+
+  const handleResendVerification = () => {
+    const result = sendEmailVerification(verificationEmail);
+    if (result.success) {
+      setSignupPrompt('New verification code sent!');
+    } else {
+      setSignupPrompt(result.message || 'Failed to send verification code!');
+    }
   };
 
   return (
@@ -142,18 +191,22 @@ export function AuthPage() {
                       placeholder="••••••••"
                       autoComplete="current-password"
                       className="bg-[#f9fafb] border-[#e5e7eb] dark:bg-[#111827] dark:border-[#374151] dark:text-white"
+                      value={signInPassword}
+                      onChange={e => setSignInPassword(e.target.value)}
                       required
                     />
                   </div>
                   <Button 
                     type="submit" 
+                    disabled={loading}
                     className="w-full bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6] hover:opacity-90"
                   >
-                    Sign In
+                    {loading ? 'Signing In...' : 'Sign In'}
                   </Button>
                   <div className="text-xs text-[#6b7280] dark:text-[#9ca3af] bg-[#f3f4f6] dark:bg-[#111827] p-3 rounded-lg">
                     <strong>Test accounts:</strong><br />
-                    bob@student.test (Student) · carol@instructor.test (Instructor)
+                    bob@student.test / password123 (Student)<br />
+                    carol@instructor.test / teach456 (Instructor)
                   </div>
                 </form>
               </TabsContent>
@@ -258,20 +311,25 @@ export function AuthPage() {
                       id="signup-password" 
                       name="signup-password"
                       type="password" 
-                      placeholder="••••••••"
+                      placeholder="Min 6 chars, 1 letter, 1 number"
                       className="bg-[#f9fafb] border-[#e5e7eb] dark:bg-[#111827] dark:border-[#374151] dark:text-white"
+                      value={signUpPassword}
+                      onChange={e => setSignUpPassword(e.target.value)}
                       required
+                      minLength={6}
                     />
+                    <p className="text-xs text-[#6b7280] dark:text-[#9ca3af]">Password must be at least 6 characters with 1 letter and 1 number</p>
                   </div>
                   <Button 
                     type="submit" 
+                    disabled={loading}
                     className={`w-full ${
                       selectedRole === 'student' 
                         ? 'bg-gradient-to-r from-[#4f46e5] to-[#6366f1]' 
                         : 'bg-gradient-to-r from-[#8b5cf6] to-[#a78bfa]'
                     } hover:opacity-90`}
                   >
-                    Create {selectedRole === 'student' ? 'Student' : 'Instructor'} Account
+                    {loading ? 'Creating Account...' : `Create ${selectedRole === 'student' ? 'Student' : 'Instructor'} Account`}
                   </Button>
                 </form>
               </TabsContent>
@@ -286,6 +344,88 @@ export function AuthPage() {
           </Link>
         </div>
       </div>
+
+      {/* Email Verification Modal */}
+      {showEmailVerification && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+          <Card className="max-w-md w-full border-none shadow-2xl">
+            <CardHeader className="bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6] text-white rounded-t-xl">
+              <CardTitle className="text-xl">Email Verification</CardTitle>
+              <CardDescription className="text-white/90">
+                We've sent a verification code to {verificationEmail}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              {signupPrompt && (
+                <div className={`flex items-center gap-3 p-3 mb-4 rounded-lg ${
+                  signupPrompt.includes('success') 
+                    ? 'bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30'
+                    : 'bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/30'
+                }`}>
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <p className="text-sm">{signupPrompt}</p>
+                </div>
+              )}
+              
+              <form onSubmit={handleEmailVerification} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="verification-code" className="dark:text-[#d1d5db]">Verification Code</Label>
+                  <Input 
+                    id="verification-code" 
+                    type="text" 
+                    placeholder="Enter 6-digit code"
+                    className="bg-[#f9fafb] border-[#e5e7eb] dark:bg-[#111827] dark:border-[#374151] dark:text-white text-center text-lg font-mono"
+                    value={verificationCode}
+                    onChange={e => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    maxLength={6}
+                    required
+                  />
+                </div>
+                
+                <div className="flex gap-3">
+                  <Button 
+                    type="submit" 
+                    disabled={loading || verificationCode.length !== 6}
+                    className="flex-1 bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6] hover:opacity-90"
+                  >
+                    {loading ? 'Verifying...' : 'Verify Email'}
+                  </Button>
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowEmailVerification(false);
+                      setVerificationCode('');
+                      setSignupPrompt('');
+                    }}
+                    className="px-4"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+              
+              <div className="mt-4 pt-4 border-t border-[#e5e7eb] dark:border-[#374151] text-center">
+                <p className="text-sm text-[#6b7280] dark:text-[#9ca3af] mb-2">
+                  Didn't receive the code?
+                </p>
+                <Button 
+                  type="button"
+                  variant="link"
+                  onClick={handleResendVerification}
+                  className="text-sm text-[#4f46e5] hover:text-[#8b5cf6] p-0 h-auto"
+                >
+                  Resend Code
+                </Button>
+              </div>
+              
+              <div className="mt-4 text-xs text-[#6b7280] dark:text-[#9ca3af] bg-[#f3f4f6] dark:bg-[#111827] p-3 rounded-lg">
+                <strong>Demo:</strong> Check the browser console for the verification code
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

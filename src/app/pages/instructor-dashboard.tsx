@@ -64,8 +64,8 @@ export function InstructorDashboard() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <span className="text-3xl font-bold text-[#10b981]">${totalSpent}</span>
-                <DollarSign className="w-8 h-8 text-[#10b981]" />
+                <span className="text-3xl font-bold text-[#10b981]">{totalSpent} EGP</span>
+                <TrendingUp className="w-8 h-8 text-[#10b981]" />
               </div>
               <p className={`text-xs ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'} mt-2`}>Subscription total</p>
             </CardContent>
@@ -131,7 +131,7 @@ export function InstructorDashboard() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className={`text-2xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'} mb-1`}>${subscription.amount}</div>
+                    <div className={`text-2xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'} mb-1`}>{subscription.amount} EGP</div>
                     <p className={`text-xs ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'}`}>per month</p>
                     <Badge className="mt-2 bg-[#10b981]">{subscription.status}</Badge>
                   </div>

@@ -16,7 +16,7 @@ export function PaymentPage() {
   const dark = theme === 'dark';
   
   const bookingData = location.state || {};
-  const transactionAmount = bookingData.price || 5.00;
+  const transactionAmount = bookingData.price || 150.00;
   const bookingId = `BK-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
   
   const handlePayment = () => {
