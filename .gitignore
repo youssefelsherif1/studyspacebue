@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Backend build output
+Backend/StudySpaceApi/bin/
+Backend/StudySpaceApi/obj/
+Backend/StudySpaceApi/publish/
+Backend/StudySpaceApi/publish_self_contained/
+
+# IDE
+.vs/
+.vscode/
+*.suo
+*.user
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+npm-debug.log*
