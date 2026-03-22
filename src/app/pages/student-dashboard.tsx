@@ -18,7 +18,10 @@ export function StudentDashboard() {
 
   if (!user) return null;
 
-  const userBookings = mockBookings.filter(b => b.userId === 'u1'); // Show sample bookings
+  const userBookings = mockBookings.filter(b => b.userId === user.id || (user.name === 'Alice Smith' && b.userId === 'u1')); // Match current user or fallback for Alice demo data
+  const confirmedBookings = userBookings.filter(b => b.status === 'confirmed');
+  const studyHours = confirmedBookings.length; // Each booking is 1 hour
+  
   const nextReward = 250;
   const progress = Math.min((user.points / nextReward) * 100, 100);
   const dark = theme === 'dark';
@@ -44,7 +47,7 @@ export function StudentDashboard() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <span className={`text-3xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>{userBookings.length}</span>
+                <span className={`text-3xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>{confirmedBookings.length}</span>
                 <Calendar className="w-8 h-8 text-[#4f46e5]" />
               </div>
               <p className={`text-xs ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'} mt-2`}>This week</p>
@@ -70,7 +73,7 @@ export function StudentDashboard() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <span className={`text-3xl font-bold ${dark ? 'text-[#f59e0b]' : 'text-[#f59e0b]'}`}>24</span>
+                <span className={`text-3xl font-bold text-[#f59e0b]`}>{studyHours}</span>
                 <Clock className="w-8 h-8 text-[#f59e0b]" />
               </div>
               <p className={`text-xs ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'} mt-2`}>This month</p>

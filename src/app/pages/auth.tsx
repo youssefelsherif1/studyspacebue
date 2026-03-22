@@ -62,8 +62,8 @@ export function AuthPage() {
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
-    const success = login(signInEmail);
-    if (success) {
+    const result = login(signInEmail);
+    if (result.success) {
       // After login, the component will re-render with the user set
       setTimeout(() => {
         const saved = localStorage.getItem('studyspace_user');
@@ -78,11 +78,14 @@ export function AuthPage() {
           }
         }
       }, 100);
-    } else {
-      // Account not found — switch to Sign Up tab with a prompt message
-      setSignUpEmail(signInEmail); // Pre-fill their email
-      setSignupPrompt('Account not found! Please create your account first.');
-      setActiveTab('signup');
+      // Account not found or pending
+      if (result.message && result.message.includes('pending')) {
+        setSignupPrompt(result.message);
+      } else {
+        setSignUpEmail(signInEmail); // Pre-fill their email
+        setSignupPrompt('Account not found! Please create your account first.');
+        setActiveTab('signup');
+      }
     }
   };
 
@@ -98,11 +101,11 @@ export function AuthPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-2">
+          <div className="inline-flex items-center gap-2 mb-2">
             <div className="w-12 h-12 bg-gradient-to-br from-[#4f46e5] to-[#8b5cf6] rounded-xl flex items-center justify-center">
               <BookOpen className="w-7 h-7 text-white" />
             </div>
-          </Link>
+          </div>
           <h1 className="text-2xl font-bold text-[#1a1a2e] dark:text-white">Welcome to StudySpace</h1>
           <p className="text-[#6b7280] dark:text-[#9ca3af] mt-2">Sign in to manage your study sessions</p>
         </div>
@@ -152,7 +155,7 @@ export function AuthPage() {
                   <div className="text-xs text-[#6b7280] dark:text-[#9ca3af] bg-[#f3f4f6] dark:bg-[#111827] p-3 rounded-lg">
                     <strong>Test accounts:</strong><br />
                     alice@student.test (Student) · bob@student.test (Student)<br />
-                    carol@instructor.test · dave@admin.test · eve@reception.test
+                    carol@instructor.test (Instructor)
                   </div>
                 </form>
               </TabsContent>

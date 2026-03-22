@@ -20,8 +20,9 @@ export function InstructorDashboard() {
 
   if (!user) return null;
 
-  const userSubscriptions = mockSubscriptions;
+  const userSubscriptions = mockSubscriptions.filter(s => s.instructorId === user.id || (user.name === 'Dr. Carol' && s.instructorId === 'u2'));
   const totalSpent = userSubscriptions.reduce((sum, sub) => sum + sub.amount, 0);
+  const totalSessions = userSubscriptions.length * 4; // Simplified: 4 sessions per month per sub
 
   const handleCancel = (id: string) => {
     if (confirm('Are you sure you want to cancel this subscription?')) {
@@ -76,7 +77,7 @@ export function InstructorDashboard() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <span className={`text-3xl font-bold ${dark ? 'text-white' : 'text-[#4f46e5]'}`}>48</span>
+                <span className={`text-3xl font-bold ${dark ? 'text-white' : 'text-[#4f46e5]'}`}>{totalSessions}</span>
                 <Calendar className="w-8 h-8 text-[#4f46e5]" />
               </div>
               <p className={`text-xs ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'} mt-2`}>This semester</p>

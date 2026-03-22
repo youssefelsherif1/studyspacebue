@@ -16,7 +16,10 @@ export function ProfilePage() {
 
   if (!user) return null;
 
-  const userBookings = mockBookings.filter(b => b.userId === 'u1');
+  const userBookings = mockBookings.filter(b => b.userId === user.id || (user.name === 'Sarah Johnson' && b.userId === 'u1'));
+  const confirmedBookings = userBookings.filter(b => b.status === 'confirmed');
+  const studyHours = confirmedBookings.length;
+  const totalSpent = userBookings.reduce((sum, b) => sum + b.amount, 0);
   const userSubscriptions = user.role === 'instructor' ? mockSubscriptions : [];
 
   return (
@@ -59,14 +62,14 @@ export function ProfilePage() {
           <Card className={`${dark ? 'border-[#374151] bg-[#1f2937]' : 'border-[#e5e7eb]'} text-center`}>
             <CardContent className="pt-6 pb-4">
               <Clock className="w-8 h-8 text-[#f59e0b] mx-auto mb-2" />
-              <div className={`text-2xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>24</div>
+              <div className={`text-2xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>{studyHours}</div>
               <div className={`text-xs ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'}`}>Study Hours</div>
             </CardContent>
           </Card>
           <Card className={`${dark ? 'border-[#374151] bg-[#1f2937]' : 'border-[#e5e7eb]'} text-center`}>
             <CardContent className="pt-6 pb-4">
               <DollarSign className="w-8 h-8 text-[#10b981] mx-auto mb-2" />
-              <div className={`text-2xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>$45</div>
+              <div className={`text-2xl font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>${totalSpent}</div>
               <div className={`text-xs ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'}`}>Total Spent</div>
             </CardContent>
           </Card>

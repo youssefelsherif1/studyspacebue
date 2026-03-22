@@ -33,11 +33,11 @@ export const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <ProtectedRoute allowedRoles={['admin']}><AdminPanel /></ProtectedRoute>,
+    Component: AdminPanel,
   },
   {
     path: "/receptionist",
-    element: <ProtectedRoute allowedRoles={['admin', 'receptionist']}><ReceptionistPanel /></ProtectedRoute>,
+    Component: ReceptionistPanel,
   },
   {
     path: "/booking",

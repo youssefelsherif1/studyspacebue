@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { DashboardLayout } from '../components/dashboard-layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -14,10 +15,17 @@ import {
   MoreHorizontal,
   Plus,
   Edit,
-  Trash2
+  Trash2,
+  ShieldCheck,
+  AlertCircle,
+  Mail,
+  Lock
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { statsData, mockBookings, mockUsers, mockRooms, mockSubscriptions } from '../data/mock-data';
+import { useAuth } from '../context/AuthContext';
+import { Label } from '../components/ui/label';
+import { Input } from '../components/ui/input';
 
 const revenueData = [
   { name: 'Mon', revenue: 1200 },
@@ -44,12 +52,80 @@ const roomTypeData = [
 ];
 
 export function AdminPanel() {
-  const adminUser = { name: 'Admin User', points: 0 };
+  const { user, login, approveUser, deleteUser } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  // Combine mockUsers and dynamically registered users for staff management
+  const storedUsers = localStorage.getItem('studyspace_registered_users');
+  const dynamicUsers = storedUsers ? JSON.parse(storedUsers) : [];
+  const allStaff = [...mockUsers, ...dynamicUsers].filter((u: any) => u.role === 'receptionist' || u.role === 'admin');
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = login(email, password);
+    if (!result.success) {
+      setError(result.message || 'Invalid credentials');
+    } else {
+      setError('');
+    }
+  };
+
+  if (!user || user.role !== 'admin') {
+    return (
+      <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center p-6">
+        <Card className="max-w-md w-full shadow-lg border-none">
+          <CardHeader className="text-center pb-2">
+            <div className="w-16 h-16 bg-[#4f46e5]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <ShieldCheck className="w-10 h-10 text-[#4f46e5]" />
+            </div>
+            <CardTitle className="text-2xl font-bold">Admin Portal</CardTitle>
+            <CardDescription>Enter your secure credentials to continue</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleAdminLogin} className="space-y-4">
+              {error && (
+                <div className="bg-[#fee2e2] text-[#b91c1c] p-3 rounded-lg text-sm flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  {error}
+                </div>
+              )}
+              <div className="space-y-2">
+                <Label>Username</Label>
+                <Input 
+                  placeholder="Username" 
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  className="bg-[#f9fafb]"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Password</Label>
+                <Input 
+                  type="password" 
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  className="bg-[#f9fafb]"
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full bg-[#1a1a2e] hover:bg-[#2d2d4d]">
+                Log In
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <DashboardLayout 
       userRole="admin" 
-      userName={adminUser.name}
+      userName={user.name}
     >
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
@@ -140,7 +216,7 @@ export function AdminPanel() {
             <CardContent>
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-3xl font-bold text-[#1a1a2e]">{statsData.totalUsers}</div>
+                  <div className="text-3xl font-bold text-[#1a1a2e]">{mockUsers.length + dynamicUsers.length}</div>
                   <div className="flex items-center gap-1 mt-1">
                     <TrendingUp className="w-4 h-4 text-[#10b981]" />
                     <span className="text-xs text-[#10b981]">+24 this week</span>
@@ -350,6 +426,7 @@ export function AdminPanel() {
           <TabsList>
             <TabsTrigger value="bookings">Recent Bookings</TabsTrigger>
             <TabsTrigger value="users">Recent Users</TabsTrigger>
+            <TabsTrigger value="staff">Staff Management</TabsTrigger>
             <TabsTrigger value="rooms">Room Management</TabsTrigger>
           </TabsList>
 
@@ -405,38 +482,66 @@ export function AdminPanel() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="users">
+          <TabsContent value="staff">
             <Card className="border-[#e5e7eb]">
               <CardHeader>
-                <CardTitle>Recent Users</CardTitle>
-                <CardDescription>Newly registered members</CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Staff Management</CardTitle>
+                    <CardDescription>Approve and manage receptionist accounts</CardDescription>
+                  </div>
+                  <Badge className="bg-[#4f46e5]">Total Staff: {allStaff.length}</Badge>
+                </div>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
+                      <TableHead>Staff Name</TableHead>
                       <TableHead>Email</TableHead>
                       <TableHead>Role</TableHead>
-                      <TableHead>Points</TableHead>
-                      <TableHead>Joined</TableHead>
-                      <TableHead></TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {mockUsers.map((user) => (
-                      <TableRow key={user.id}>
-                        <TableCell className="font-medium">{user.name}</TableCell>
-                        <TableCell className="text-[#6b7280]">{user.email}</TableCell>
+                    {allStaff.map((staff: any) => (
+                      <TableRow key={staff.email}>
+                        <TableCell className="font-medium">{staff.name}</TableCell>
+                        <TableCell className="text-[#6b7280]">{staff.email}</TableCell>
                         <TableCell>
-                          <Badge variant="secondary">{user.role}</Badge>
+                          <Badge variant="outline" className="capitalize">{staff.role}</Badge>
                         </TableCell>
-                        <TableCell className="font-semibold text-[#4f46e5]">{user.points} pts</TableCell>
-                        <TableCell className="text-sm text-[#6b7280]">{user.joinedDate}</TableCell>
                         <TableCell>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
+                          <Badge 
+                            variant={staff.status === 'active' ? 'default' : 'secondary'}
+                            className={staff.status === 'active' ? 'bg-[#10b981]' : 'bg-[#f59e0b] animate-pulse'}
+                          >
+                            {staff.status || 'active'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            {staff.status === 'pending' && (
+                              <Button 
+                                size="sm" 
+                                className="bg-[#10b981] hover:bg-[#059669]"
+                                onClick={() => { approveUser(staff.email); window.location.reload(); }}
+                              >
+                                Approve
+                              </Button>
+                            )}
+                            {staff.role !== 'admin' && (
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                className="text-[#ef4444] hover:bg-[#ef4444]/10"
+                                onClick={() => { if(confirm('Delete staff account?')) { deleteUser(staff.email); window.location.reload(); } }}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
