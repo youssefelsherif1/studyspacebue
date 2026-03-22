@@ -62,8 +62,11 @@ export function AuthPage() {
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
-    const result = login(signInEmail);
+    const password = (e.target as any).elements['signin-password']?.value;
+    const result = login(signInEmail, password);
+    
     if (result.success) {
+      setSignupPrompt('');
       // After login, the component will re-render with the user set
       setTimeout(() => {
         const saved = localStorage.getItem('studyspace_user');
@@ -78,12 +81,13 @@ export function AuthPage() {
           }
         }
       }, 100);
+    } else {
       // Account not found or pending
       if (result.message && result.message.includes('pending')) {
         setSignupPrompt(result.message);
       } else {
         setSignUpEmail(signInEmail); // Pre-fill their email
-        setSignupPrompt('Account not found! Please create your account first.');
+        setSignupPrompt(result.message || 'Account not found! Please create your account first.');
         setActiveTab('signup');
       }
     }
@@ -128,6 +132,7 @@ export function AuthPage() {
                     <Label htmlFor="signin-email" className="dark:text-[#d1d5db]">Email</Label>
                     <Input 
                       id="signin-email" 
+                      name="signin-email"
                       type="email" 
                       placeholder="e.g. alice@student.test"
                       className="bg-[#f9fafb] border-[#e5e7eb] dark:bg-[#111827] dark:border-[#374151] dark:text-white"
@@ -140,6 +145,7 @@ export function AuthPage() {
                     <Label htmlFor="signin-password" className="dark:text-[#d1d5db]">Password</Label>
                     <Input 
                       id="signin-password" 
+                      name="signin-password"
                       type="password" 
                       placeholder="••••••••"
                       className="bg-[#f9fafb] border-[#e5e7eb] dark:bg-[#111827] dark:border-[#374151] dark:text-white"
@@ -245,6 +251,7 @@ export function AuthPage() {
                     <Label htmlFor="signup-email" className="dark:text-[#d1d5db]">Email</Label>
                     <Input 
                       id="signup-email" 
+                      name="signup-email"
                       type="email" 
                       placeholder="you@example.com"
                       className="bg-[#f9fafb] border-[#e5e7eb] dark:bg-[#111827] dark:border-[#374151] dark:text-white"
@@ -257,6 +264,7 @@ export function AuthPage() {
                     <Label htmlFor="signup-password" className="dark:text-[#d1d5db]">Password</Label>
                     <Input 
                       id="signup-password" 
+                      name="signup-password"
                       type="password" 
                       placeholder="••••••••"
                       className="bg-[#f9fafb] border-[#e5e7eb] dark:bg-[#111827] dark:border-[#374151] dark:text-white"
