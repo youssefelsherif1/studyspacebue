@@ -52,10 +52,15 @@ const roomTypeData = [
 ];
 
 export function AdminPanel() {
-  const { user, login, approveUser, deleteUser } = useAuth();
+  const { user, login, approveUser, deleteUser, createReceptionist } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  
+  // New Receptionist Form State
+  const [newRecpName, setNewRecpName] = useState('');
+  const [newRecpEmail, setNewRecpEmail] = useState('');
+  const [showAddStaff, setShowAddStaff] = useState(false);
 
   // Combine mockUsers and dynamically registered users for staff management
   const storedUsers = localStorage.getItem('studyspace_registered_users');
@@ -490,8 +495,54 @@ export function AdminPanel() {
                     <CardTitle>Staff Management</CardTitle>
                     <CardDescription>Approve and manage receptionist accounts</CardDescription>
                   </div>
-                  <Badge className="bg-[#4f46e5]">Total Staff: {allStaff.length}</Badge>
+                  <div className="flex gap-2">
+                    <Button 
+                      className="bg-[#1a1a2e]"
+                      onClick={() => setShowAddStaff(!showAddStaff)}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      {showAddStaff ? 'Cancel' : 'Add Staff'}
+                    </Button>
+                    <Badge className="bg-[#4f46e5]">Total Staff: {allStaff.length}</Badge>
+                  </div>
                 </div>
+                {showAddStaff && (
+                  <div className={`mt-6 p-6 border rounded-xl bg-[#f9fafb] space-y-4`}>
+                    <h3 className="font-bold text-[#1a1a2e]">Create New Receptionist</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Full Name</Label>
+                        <Input 
+                          placeholder="Receptionist Name" 
+                          value={newRecpName}
+                          onChange={e => setNewRecpName(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Email Address</Label>
+                        <Input 
+                          placeholder="email@example.com" 
+                          value={newRecpEmail}
+                          onChange={e => setNewRecpEmail(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <Button 
+                      className="bg-[#4f46e5]"
+                      onClick={() => {
+                        if (newRecpName && newRecpEmail) {
+                          createReceptionist(newRecpName, newRecpEmail);
+                          setNewRecpName('');
+                          setNewRecpEmail('');
+                          setShowAddStaff(false);
+                          alert('Receptionist created successfully!');
+                        }
+                      }}
+                    >
+                      Create Account
+                    </Button>
+                  </div>
+                )}
               </CardHeader>
               <CardContent>
                 <Table>

@@ -76,7 +76,7 @@ export const mockRooms: Room[] = [
     },
     status: 'available',
     image: 'study-room-quiet',
-    pricePerHour: 5,
+    pricePerHour: 250,
   },
   {
     id: '2',
@@ -92,7 +92,7 @@ export const mockRooms: Room[] = [
     status: 'booked',
     availableAt: '6:00 PM',
     image: 'meeting-room-modern',
-    pricePerHour: 15,
+    pricePerHour: 750,
   },
   {
     id: '3',
@@ -107,7 +107,7 @@ export const mockRooms: Room[] = [
     },
     status: 'available',
     image: 'outdoor-terrace-study',
-    pricePerHour: 8,
+    pricePerHour: 400,
   },
   {
     id: '4',
@@ -122,7 +122,7 @@ export const mockRooms: Room[] = [
     },
     status: 'available',
     image: 'study-pod-modern',
-    pricePerHour: 6,
+    pricePerHour: 300,
   },
   {
     id: '5',
@@ -137,7 +137,7 @@ export const mockRooms: Room[] = [
     },
     status: 'available',
     image: 'conference-room-large',
-    pricePerHour: 20,
+    pricePerHour: 1000,
   },
   {
     id: '6',
@@ -153,7 +153,7 @@ export const mockRooms: Room[] = [
     status: 'booked',
     availableAt: '4:30 PM',
     image: 'quiet-workspace',
-    pricePerHour: 5,
+    pricePerHour: 250,
   },
   {
     id: '7',
@@ -168,7 +168,7 @@ export const mockRooms: Room[] = [
     },
     status: 'available',
     image: 'rooftop-lounge',
-    pricePerHour: 12,
+    pricePerHour: 600,
   },
   {
     id: '8',
@@ -183,24 +183,11 @@ export const mockRooms: Room[] = [
     },
     status: 'available',
     image: 'tech-lab-modern',
-    pricePerHour: 18,
+    pricePerHour: 900,
   },
 ];
 
 export const mockBookings: Booking[] = [
-  {
-    id: 'b1',
-    roomId: '2',
-    roomName: 'Collaboration Space B',
-    userId: 'u1',
-    userName: 'Sarah Johnson',
-    date: '2026-03-21',
-    timeSlot: '2:00 PM - 4:00 PM',
-    status: 'confirmed',
-    paid: true,
-    amount: 30,
-    qrCode: 'QR-B1-2026',
-  },
   {
     id: 'b2',
     roomId: '1',
@@ -211,7 +198,7 @@ export const mockBookings: Booking[] = [
     timeSlot: '10:00 AM - 12:00 PM',
     status: 'completed',
     paid: true,
-    amount: 10,
+    amount: 500,
   },
   {
     id: 'b3',
@@ -223,7 +210,7 @@ export const mockBookings: Booking[] = [
     timeSlot: '1:00 PM - 4:30 PM',
     status: 'confirmed',
     paid: true,
-    amount: 17.5,
+    amount: 875,
     qrCode: 'QR-B3-2026',
   },
   {
@@ -236,21 +223,12 @@ export const mockBookings: Booking[] = [
     timeSlot: '3:00 PM - 5:00 PM',
     status: 'confirmed',
     paid: true,
-    amount: 16,
+    amount: 800,
     qrCode: 'QR-B4-2026',
   },
 ];
 
 export const mockUsers: User[] = [
-  {
-    id: 'u1',
-    name: 'Sarah Johnson',
-    email: 'sarah.j@example.com',
-    role: 'student',
-    points: 245,
-    avatar: 'woman-professional',
-    joinedDate: '2025-09-15',
-  },
   {
     id: 'u2',
     name: 'Michael Chen',
@@ -290,7 +268,7 @@ export const mockSubscriptions: Subscription[] = [
     schedule: 'Every Sunday',
     timeSlot: '5:00 PM - 8:00 PM',
     status: 'active',
-    amount: 180,
+    amount: 1500,
   },
   {
     id: 's2',
@@ -301,7 +279,7 @@ export const mockSubscriptions: Subscription[] = [
     schedule: 'Every Wednesday',
     timeSlot: '6:00 PM - 9:00 PM',
     status: 'active',
-    amount: 240,
+    amount: 2500,
   },
 ];
 

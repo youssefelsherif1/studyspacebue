@@ -1,9 +1,11 @@
 import { Link } from 'react-router';
 import { Button } from '../components/ui/button';
-import { BookOpen, Clock, Users, Zap, Check, Award, MapPin } from 'lucide-react';
+import { BookOpen, Clock, Zap, Check, Award, MapPin } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { useAuth } from '../context/AuthContext';
 
 export function LandingPage() {
+  const { user } = useAuth();
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f9fafb] via-white to-[#e0e7ff]">
       {/* Header */}
@@ -18,13 +20,20 @@ export function LandingPage() {
           <nav className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-[#6b7280] hover:text-[#1a1a2e] transition-colors">Features</a>
             <a href="#pricing" className="text-[#6b7280] hover:text-[#1a1a2e] transition-colors">Pricing</a>
-            <a href="#about" className="text-[#6b7280] hover:text-[#1a1a2e] transition-colors">About</a>
-            <Link to="/auth">
-              <Button variant="outline" className="border-[#e5e7eb]">Sign In</Button>
-            </Link>
-            <Link to="/auth">
-              <Button className="bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6] hover:opacity-90">Get Started</Button>
-            </Link>
+            {user ? (
+              <Link to={user.role === 'student' ? '/student' : user.role === 'instructor' ? '/instructor' : user.role === 'admin' ? '/admin' : '/receptionist'}>
+                <Button className="bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6] hover:opacity-90">Dashboard</Button>
+              </Link>
+            ) : (
+              <>
+                <Link to="/auth">
+                  <Button variant="outline" className="border-[#e5e7eb]">Sign In</Button>
+                </Link>
+                <Link to="/auth">
+                  <Button className="bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6] hover:opacity-90">Get Started</Button>
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       </header>
@@ -41,7 +50,7 @@ export function LandingPage() {
               Your Perfect Study Space Awaits
             </h1>
             <p className="text-xl text-[#6b7280] mb-8 leading-relaxed">
-              Book premium study rooms, connect with study groups, and earn rewards. The modern way to manage your study time.
+              Book premium study rooms and earn rewards. The modern way to manage your study time.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to="/auth">
@@ -89,15 +98,6 @@ export function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-[#f9fafb] to-white border border-[#e5e7eb] rounded-2xl p-8 hover:shadow-lg transition-shadow">
-              <div className="w-14 h-14 bg-gradient-to-br from-[#8b5cf6] to-[#a78bfa] rounded-xl flex items-center justify-center mb-6">
-                <Users className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-[#1a1a2e] mb-3">Study Groups</h3>
-              <p className="text-[#6b7280] leading-relaxed">
-                Find and join study groups that match your subjects, level, and study preferences automatically.
-              </p>
-            </div>
 
             <div className="bg-gradient-to-br from-[#f9fafb] to-white border border-[#e5e7eb] rounded-2xl p-8 hover:shadow-lg transition-shadow">
               <div className="w-14 h-14 bg-gradient-to-br from-[#06b6d4] to-[#0891b2] rounded-xl flex items-center justify-center mb-6">
@@ -193,7 +193,7 @@ export function LandingPage() {
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2">
                   <Check className="w-5 h-5" />
-                  Up to 6 people
+                  Premium features included
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="w-5 h-5" />
@@ -222,15 +222,15 @@ export function LandingPage() {
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2 text-[#6b7280]">
                   <Check className="w-5 h-5 text-[#10b981]" />
-                  Fresh air environment
+                  Premium features included
                 </li>
                 <li className="flex items-center gap-2 text-[#6b7280]">
                   <Check className="w-5 h-5 text-[#10b981]" />
-                  Up to 4 people
+                  Ergonomic seating
                 </li>
                 <li className="flex items-center gap-2 text-[#6b7280]">
                   <Check className="w-5 h-5 text-[#10b981]" />
-                  Natural lighting
+                  Quiet environment
                 </li>
                 <li className="flex items-center gap-2 text-[#6b7280]">
                   <Check className="w-5 h-5 text-[#10b981]" />

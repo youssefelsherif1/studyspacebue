@@ -3,22 +3,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
-import { Calendar, Clock, MapPin, TrendingUp, Users, Award } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Award } from 'lucide-react';
 import { Link } from 'react-router';
-import { mockBookings } from '../data/mock-data';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { mockBookings, mockSubscriptions } from '../data/mock-data';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useState } from 'react';
 
 export function StudentDashboard() {
-  const { user } = useAuth();
+  const { user, bookings: dynamicBookings } = useAuth();
   const { theme } = useTheme();
   const [qrBookingId, setQrBookingId] = useState<string | null>(null);
 
   if (!user) return null;
 
-  const userBookings = mockBookings.filter(b => b.userId === user.id || (user.name === 'Alice Smith' && b.userId === 'u1')); // Match current user or fallback for Alice demo data
+  const userBookings = [
+    ...dynamicBookings.filter(b => b.userId === user.id),
+    ...mockBookings.filter(b => b.userId === user.id || (user.name === 'Alice Smith' && b.userId === 'u1'))
+  ];
   const confirmedBookings = userBookings.filter(b => b.status === 'confirmed');
   const studyHours = confirmedBookings.length; // Each booking is 1 hour
   
@@ -178,6 +180,42 @@ export function StudentDashboard() {
             </Card>
           )}
         </div>
+
+        {/* Instructor Sessions */}
+        <Card className={dark ? 'border-[#374151] bg-[#1f2937]' : 'border-[#e5e7eb]'}>
+          <CardHeader>
+            <CardTitle className={dark ? 'text-white' : ''}>Upcoming Sessions</CardTitle>
+            <CardDescription>Join study sessions led by professional instructors</CardDescription>
+          </CardHeader>
+          <CardContent className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {mockSubscriptions.map((session) => (
+              <div key={session.id} className={`p-4 rounded-xl border ${dark ? 'border-[#374151] bg-[#111827]' : 'border-[#e5e7eb] bg-[#f9fafb]'} hover:shadow-md transition-shadow`}>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-[#4f46e5]/10 rounded-full flex items-center justify-center">
+                    <Users className="w-5 h-5 text-[#4f46e5]" />
+                  </div>
+                  <div>
+                    <h4 className={`font-semibold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>{session.instructorName}</h4>
+                    <p className={`text-xs ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'}`}>{session.roomName}</p>
+                  </div>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className={`flex items-center gap-2 text-sm ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'}`}>
+                    <Calendar className="w-4 h-4" />
+                    {session.schedule}
+                  </div>
+                  <div className={`flex items-center gap-2 text-sm ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'}`}>
+                    <Clock className="w-4 h-4" />
+                    {session.timeSlot}
+                  </div>
+                </div>
+                <Button className="w-full bg-[#4f46e5] hover:bg-[#4f46e5]/90">
+                  Join Session
+                </Button>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
 
         {/* Quick Actions */}
         <Card className={dark ? 'border-[#374151] bg-[#1f2937]' : 'border-[#e5e7eb]'}>

@@ -4,35 +4,26 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Badge } from '../components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
-import { Calendar, QrCode, DollarSign, User, Clock, Check, X, LogIn, UserPlus, AlertCircle } from 'lucide-react';
+import { Calendar, QrCode, DollarSign, User, Clock, Check, X, AlertCircle } from 'lucide-react';
 import { mockRooms, mockBookings, timeSlots } from '../data/mock-data';
 import { useAuth } from '../context/AuthContext';
 
 export function ReceptionistPanel() {
-  const { user, login, signup } = useAuth();
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const { user, login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [qrCode, setQrCode] = useState('');
   const [showQuickBooking, setShowQuickBooking] = useState(false);
 
   const handleAuth = (e: React.FormEvent) => {
     e.preventDefault();
-    if (authMode === 'login') {
-      const result = login(email, password);
-      if (!result.success) setError(result.message || 'Login failed');
-      else setError('');
-    } else {
-      signup(name, email, 'receptionist');
-      // Signup automatically logs in but might be pending
-      setError('');
-    }
+    const result = login(email, password);
+    if (!result.success) setError(result.message || 'Login failed');
+    else setError('');
   };
 
   if (!user || user.role !== 'receptionist') {
@@ -44,18 +35,10 @@ export function ReceptionistPanel() {
               <User className="w-10 h-10" />
             </div>
             <h2 className="text-2xl font-bold">Receptionist Portal</h2>
-            <p className="text-white/60 text-sm mt-1 capitalize">{authMode} to manage library guest access</p>
+            <p className="text-white/60 text-sm mt-1 capitalize">Login to manage library guest access</p>
           </div>
           <CardContent className="p-8">
-            <Tabs value={authMode} onValueChange={(v) => { setAuthMode(v as any); setError(''); }} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="login" className="flex items-center gap-2">
-                  <LogIn className="w-4 h-4" /> Login
-                </TabsTrigger>
-                <TabsTrigger value="signup" className="flex items-center gap-2">
-                  <UserPlus className="w-4 h-4" /> Register
-                </TabsTrigger>
-              </TabsList>
+            <div className="w-full">
 
               {error && (
                 <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2 mb-6 border border-red-100">
@@ -65,17 +48,7 @@ export function ReceptionistPanel() {
               )}
 
               <form onSubmit={handleAuth} className="space-y-4">
-                {authMode === 'signup' && (
-                  <div className="space-y-2">
-                    <Label>Full Name</Label>
-                    <Input 
-                      placeholder="Your Name" 
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      required
-                    />
-                  </div>
-                )}
+                {/* Login fields only */}
                 <div className="space-y-2">
                   <Label>Email</Label>
                   <Input 
@@ -96,16 +69,11 @@ export function ReceptionistPanel() {
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full h-12 bg-[#1a1a2e] hover:bg-[#2d2d4d] text-lg font-semibold">
-                  {authMode === 'login' ? 'Access Portal' : 'Apply for Access'}
+                <Button type="submit" className="w-full h-12 bg-[#1a1a2e] hover:bg-[#2d2d4d] text-lg font-semibold mt-4">
+                  Access Portal
                 </Button>
-                {authMode === 'signup' && (
-                  <p className="text-xs text-[#f59e0b] text-center mt-3 font-medium">
-                    Note: Registration requires Admin approval before login.
-                  </p>
-                )}
               </form>
-            </Tabs>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -185,7 +153,7 @@ export function ReceptionistPanel() {
                 <div>
                   <p className="text-sm text-[#6b7280] mb-1">Today's Revenue</p>
                   <p className="text-3xl font-bold text-[#8b5cf6]">
-                    ${todayBookings.reduce((sum, b) => sum + b.amount, 0)}
+                    {todayBookings.reduce((sum, b) => sum + b.amount, 0)} EGP
                   </p>
                 </div>
                 <DollarSign className="w-10 h-10 text-[#8b5cf6]" />
@@ -286,7 +254,7 @@ export function ReceptionistPanel() {
                             .filter(r => r.status === 'available')
                             .map((room) => (
                               <SelectItem key={room.id} value={room.id}>
-                                {room.name} - ${room.pricePerHour}/hr
+                                {room.name} - {room.pricePerHour} EGP/hr
                               </SelectItem>
                             ))}
                         </SelectContent>
@@ -338,7 +306,7 @@ export function ReceptionistPanel() {
                     <div key={room.id} className="flex items-center justify-between p-3 bg-[#f9fafb] rounded-lg border border-[#e5e7eb]">
                       <div>
                         <p className="font-medium text-[#1a1a2e] text-sm">{room.name}</p>
-                        <p className="text-xs text-[#6b7280]">{room.capacity} people · ${room.pricePerHour}/hr</p>
+                        <p className="text-xs text-[#6b7280]">{room.capacity} people · {room.pricePerHour} EGP/hr</p>
                       </div>
                       <Badge className="bg-[#10b981]">Available</Badge>
                     </div>
@@ -379,7 +347,7 @@ export function ReceptionistPanel() {
                       </span>
                       <span className="flex items-center gap-1">
                         <DollarSign className="w-3 h-3" />
-                        ${booking.amount}
+                        {booking.amount} EGP
                       </span>
                     </div>
                   </div>

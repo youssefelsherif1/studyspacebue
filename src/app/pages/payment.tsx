@@ -1,23 +1,42 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { CheckCircle2, ChevronLeft, CreditCard, Wallet, AlertCircle, QrCode } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 export function PaymentPage() {
   const navigate = useNavigate();
-  const [status, setStatus] = useState<'pending_payment' | 'processing' | 'confirmed' | 'failed'>('pending_payment');
+  const location = useLocation();
   const { theme } = useTheme();
+  const { user, addBooking } = useAuth();
+  
+  const [status, setStatus] = useState<'pending_payment' | 'processing' | 'confirmed' | 'failed'>('pending_payment');
   const dark = theme === 'dark';
   
-  const transactionAmount = 5.00;
-  const bookingId = `BK-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+  const bookingData = location.state || {};
+  const transactionAmount = bookingData.price || 5.00;
+  const bookingId = `BK-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
   
   const handlePayment = () => {
     setStatus('processing');
     setTimeout(() => {
       setStatus('confirmed');
+      if (user && bookingData.roomId) {
+        addBooking({
+          roomId: bookingData.roomId,
+          roomName: bookingData.roomName,
+          userId: user.id,
+          userName: user.name,
+          date: bookingData.date,
+          timeSlot: bookingData.timeSlot,
+          status: 'confirmed',
+          paid: true,
+          amount: transactionAmount,
+          qrCode: `QR-PY-${Date.now()}`
+        });
+      }
     }, 2000);
   };
 
@@ -35,7 +54,7 @@ export function PaymentPage() {
           <CardContent className={`p-8 space-y-6 ${dark ? 'bg-[#1f2937]' : 'bg-white'}`}>
             <div className={`flex justify-between py-3 border-b ${dark ? 'border-[#374151]' : 'border-[#e5e7eb]'}`}>
               <span className={dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'}>Amount Paid</span>
-              <span className={`font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>${transactionAmount.toFixed(2)}</span>
+              <span className={`font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>{transactionAmount.toFixed(2)} EGP</span>
             </div>
             <div className={`flex justify-between py-3 border-b ${dark ? 'border-[#374151]' : 'border-[#e5e7eb]'}`}>
               <span className={dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'}>Status</span>
@@ -76,7 +95,16 @@ export function PaymentPage() {
               </p>
             </div>
             
-            <Button className={`w-full h-12 ${dark ? 'bg-white text-[#1a1a2e] hover:bg-[#f3f4f6]' : 'bg-[#1a1a2e] text-white hover:bg-[#1a1a2e]/90'}`} onClick={() => navigate('/student')}>
+            <Button 
+              className={`w-full h-12 ${dark ? 'bg-white text-[#1a1a2e] hover:bg-[#f3f4f6]' : 'bg-[#1a1a2e] text-white hover:bg-[#1a1a2e]/90'}`} 
+              onClick={() => {
+                if (user) {
+                  navigate(user.role === 'student' ? '/student' : '/instructor');
+                } else {
+                  navigate('/');
+                }
+              }}
+            >
               Return to Dashboard
             </Button>
           </CardContent>
@@ -159,23 +187,23 @@ export function PaymentPage() {
                       Status: pending_payment
                     </div>
                   </div>
-                  <div className={`font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>${transactionAmount.toFixed(2)}</div>
+                  <div className={`font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>{transactionAmount.toFixed(2)} EGP</div>
                 </div>
 
                 <div className="space-y-3 mb-6">
                   <div className={`flex justify-between ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'}`}>
                     <span>Subtotal</span>
-                    <span>${transactionAmount.toFixed(2)}</span>
+                    <span>{transactionAmount.toFixed(2)} EGP</span>
                   </div>
                   <div className={`flex justify-between ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'}`}>
                     <span>Service Fee</span>
-                    <span>$0.00</span>
+                    <span>0.00 EGP</span>
                   </div>
                 </div>
 
                 <div className={`flex justify-between items-center mb-8 pt-4 border-t ${dark ? 'border-[#374151]' : 'border-[#e5e7eb]'}`}>
                   <span className={`text-lg font-bold ${dark ? 'text-white' : 'text-[#1a1a2e]'}`}>Total</span>
-                  <span className="text-2xl font-bold text-[#4f46e5]">${transactionAmount.toFixed(2)}</span>
+                  <span className="text-2xl font-bold text-[#4f46e5]">{transactionAmount.toFixed(2)} EGP</span>
                 </div>
 
                 <Button 
@@ -183,7 +211,7 @@ export function PaymentPage() {
                   disabled={status === 'processing'}
                   className="w-full h-14 text-lg bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6] text-white shadow-lg hover:opacity-90 transition-opacity"
                 >
-                  {status === 'processing' ? 'Processing...' : `Pay $${transactionAmount.toFixed(2)}`}
+                  {status === 'processing' ? 'Processing...' : `Pay ${transactionAmount.toFixed(2)} EGP`}
                 </Button>
                 
                 <p className={`text-center text-xs ${dark ? 'text-[#9ca3af]' : 'text-[#6b7280]'} mt-4`}>

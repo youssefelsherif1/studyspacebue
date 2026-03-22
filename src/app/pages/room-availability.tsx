@@ -7,7 +7,6 @@ import { Input } from '../components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { 
   MapPin, 
-  Users, 
   Monitor, 
   Sparkles, 
   Wind, 
@@ -245,13 +244,10 @@ export function RoomAvailabilityPage() {
                       <div className="flex items-start justify-between mb-4">
                         <div>
                           <h3 className="font-semibold text-lg text-[#1a1a2e] mb-2">{room.name}</h3>
-                          <div className="flex items-center gap-2 text-sm text-[#6b7280]">
-                            <Users className="w-4 h-4" />
-                            <span>Up to {room.capacity} {room.capacity === 1 ? 'person' : 'people'}</span>
-                          </div>
+                          <Badge variant="outline" className="text-xs capitalize">{room.type}</Badge>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-[#1a1a2e]">${room.pricePerHour}</div>
+                          <div className="text-2xl font-bold text-[#1a1a2e]">{room.pricePerHour} EGP</div>
                           <div className="text-xs text-[#6b7280]">per hour</div>
                         </div>
                       </div>
@@ -306,11 +302,6 @@ export function RoomAvailabilityPage() {
                             <div>
                               <h3 className="text-xl font-semibold text-[#1a1a2e] mb-2">{room.name}</h3>
                               <div className="flex items-center gap-4 text-sm text-[#6b7280] mb-3">
-                                <span className="flex items-center gap-1">
-                                  <Users className="w-4 h-4" />
-                                  {room.capacity} {room.capacity === 1 ? 'person' : 'people'}
-                                </span>
-                                <span>•</span>
                                 <Badge variant="outline" className="capitalize">{room.type}</Badge>
                               </div>
                               <div className="flex flex-wrap gap-2">
@@ -327,7 +318,7 @@ export function RoomAvailabilityPage() {
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-3xl font-bold text-[#1a1a2e] mb-1">${room.pricePerHour}</div>
+                              <div className="text-3xl font-bold text-[#1a1a2e] mb-1">{room.pricePerHour} EGP</div>
                               <div className="text-xs text-[#6b7280] mb-3">per hour</div>
                               <Badge 
                                 className={room.status === 'available' ? 'bg-[#10b981]' : 'bg-[#ef4444]'}

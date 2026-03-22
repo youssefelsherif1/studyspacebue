@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -20,44 +20,45 @@ export function AuthPage() {
   const [activeTab, setActiveTab] = useState('signin');
   const [signupPrompt, setSignupPrompt] = useState('');
 
-  // If already logged in, show logout option or redirect
-  if (user) {
-    const dashboardUrl = user.role === 'student' ? '/student' : user.role === 'instructor' ? '/instructor' : user.role === 'admin' ? '/admin' : '/receptionist';
-    
-    if (showBonus) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-[#f9fafb] via-white to-[#e0e7ff] dark:from-[#111827] dark:via-[#1f2937] dark:to-[#1e1b4b] flex items-center justify-center p-6">
-          <Card className="max-w-md w-full border-none shadow-2xl overflow-hidden">
-            <div className="bg-gradient-to-br from-[#10b981] to-[#059669] p-8 text-center">
-              <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-                <CheckCircle2 className="w-10 h-10 text-white" />
-              </div>
-              <h2 className="text-3xl font-bold text-white mb-2">Welcome, {user.name}!</h2>
-              <p className="text-white/90 text-lg">🎉 200 points have been added as a sign-up bonus!</p>
-            </div>
-            <CardContent className="p-8 space-y-4 bg-white dark:bg-[#1f2937]">
-              <div className="flex justify-between py-3 border-b border-[#e5e7eb] dark:border-[#374151]">
-                <span className="text-[#6b7280]">Your Points</span>
-                <span className="font-bold text-[#4f46e5] text-xl">{user.points} pts</span>
-              </div>
-              <div className="flex justify-between py-3 border-b border-[#e5e7eb] dark:border-[#374151]">
-                <span className="text-[#6b7280]">Role</span>
-                <span className="font-bold text-[#1a1a2e] dark:text-white capitalize">{user.role}</span>
-              </div>
-              <Button 
-                className="w-full bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6] hover:opacity-90"
-                onClick={() => navigate(dashboardUrl)}
-              >
-                Go to Dashboard →
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      );
+  // Redirection is now handled by useEffect to avoid "white page" flashes
+  useEffect(() => {
+    if (user && !showBonus) {
+      const dashboardUrl = user.role === 'student' ? '/student' : user.role === 'instructor' ? '/instructor' : user.role === 'admin' ? '/admin' : '/receptionist';
+      navigate(dashboardUrl);
     }
-    
-    navigate(dashboardUrl);
-    return null;
+  }, [user, showBonus, navigate]);
+
+  if (user && showBonus) {
+    const dashboardUrl = user.role === 'student' ? '/student' : user.role === 'instructor' ? '/instructor' : user.role === 'admin' ? '/admin' : '/receptionist';
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#f9fafb] via-white to-[#e0e7ff] dark:from-[#111827] dark:via-[#1f2937] dark:to-[#1e1b4b] flex items-center justify-center p-6">
+        <Card className="max-w-md w-full border-none shadow-2xl overflow-hidden">
+          <div className="bg-gradient-to-br from-[#10b981] to-[#059669] p-8 text-center">
+            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+              <CheckCircle2 className="w-10 h-10 text-white" />
+            </div>
+            <h2 className="text-3xl font-bold text-white mb-2">Welcome, {user.name}!</h2>
+            <p className="text-white/90 text-lg">🎉 200 points have been added as a sign-up bonus!</p>
+          </div>
+          <CardContent className="p-8 space-y-4 bg-white dark:bg-[#1f2937]">
+            <div className="flex justify-between py-3 border-b border-[#e5e7eb] dark:border-[#374151]">
+              <span className="text-[#6b7280]">Your Points</span>
+              <span className="font-bold text-[#4f46e5] text-xl">{user.points} pts</span>
+            </div>
+            <div className="flex justify-between py-3 border-b border-[#e5e7eb] dark:border-[#374151]">
+              <span className="text-[#6b7280]">Role</span>
+              <span className="font-bold text-[#1a1a2e] dark:text-white capitalize">{user.role}</span>
+            </div>
+            <Button 
+              className="w-full bg-gradient-to-r from-[#4f46e5] to-[#8b5cf6] hover:opacity-90"
+              onClick={() => navigate(dashboardUrl)}
+            >
+              Go to Dashboard →
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   const handleSignIn = (e: React.FormEvent) => {
@@ -67,20 +68,10 @@ export function AuthPage() {
     
     if (result.success) {
       setSignupPrompt('');
-      // After login, the component will re-render with the user set
-      setTimeout(() => {
-        const saved = localStorage.getItem('studyspace_user');
-        if (saved) {
-          const u = JSON.parse(saved);
-          const wasBonus = localStorage.getItem('studyspace_bonus_awarded') === 'true';
-          if (wasBonus) {
-            setShowBonus(true);
-          } else {
-            const url = u.role === 'student' ? '/student' : u.role === 'instructor' ? '/instructor' : u.role === 'admin' ? '/admin' : '/receptionist';
-            navigate(url);
-          }
-        }
-      }, 100);
+      const wasBonus = localStorage.getItem('studyspace_bonus_awarded') === 'true';
+      if (wasBonus) {
+        setShowBonus(true);
+      }
     } else {
       // Account not found or pending
       if (result.message && result.message.includes('pending')) {
@@ -135,6 +126,7 @@ export function AuthPage() {
                       name="signin-email"
                       type="email" 
                       placeholder="e.g. alice@student.test"
+                      autoComplete="off"
                       className="bg-[#f9fafb] border-[#e5e7eb] dark:bg-[#111827] dark:border-[#374151] dark:text-white"
                       value={signInEmail}
                       onChange={e => setSignInEmail(e.target.value)}
@@ -148,6 +140,7 @@ export function AuthPage() {
                       name="signin-password"
                       type="password" 
                       placeholder="••••••••"
+                      autoComplete="current-password"
                       className="bg-[#f9fafb] border-[#e5e7eb] dark:bg-[#111827] dark:border-[#374151] dark:text-white"
                       required
                     />
@@ -160,8 +153,7 @@ export function AuthPage() {
                   </Button>
                   <div className="text-xs text-[#6b7280] dark:text-[#9ca3af] bg-[#f3f4f6] dark:bg-[#111827] p-3 rounded-lg">
                     <strong>Test accounts:</strong><br />
-                    alice@student.test (Student) · bob@student.test (Student)<br />
-                    carol@instructor.test (Instructor)
+                    bob@student.test (Student) · carol@instructor.test (Instructor)
                   </div>
                 </form>
               </TabsContent>

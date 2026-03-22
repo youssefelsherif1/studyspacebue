@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { Booking } from '../data/mock-data';
 
 export interface AuthUser {
   id: string;
@@ -12,12 +13,15 @@ export interface AuthUser {
 
 interface AuthContextType {
   user: AuthUser | null;
+  bookings: Booking[];
   login: (email: string, password?: string) => { success: boolean, message?: string };
   signup: (name: string, email: string, role: string, university?: string) => void;
   logout: () => void;
   updatePoints: (newPoints: number) => void;
+  addBooking: (booking: Omit<Booking, 'id'>) => void;
   approveUser: (email: string) => void;
   deleteUser: (email: string) => void;
+  createReceptionist: (name: string, email: string) => void;
   bonusAwarded: boolean;
 }
 
@@ -28,6 +32,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('studyspace_user');
     return saved ? JSON.parse(saved) : null;
   });
+  
+  const [bookings, setBookings] = useState<Booking[]>(() => {
+    const saved = localStorage.getItem('studyspace_dynamic_bookings');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const [bonusAwarded, setBonusAwarded] = useState(() => {
     return localStorage.getItem('studyspace_bonus_awarded') === 'true';
   });
@@ -56,12 +66,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (user) {
       localStorage.setItem('studyspace_user', JSON.stringify(user));
-      // Always keep the points history in sync
       setPersistedPoints(user.email, user.points);
     } else {
       localStorage.removeItem('studyspace_user');
     }
   }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem('studyspace_dynamic_bookings', JSON.stringify(bookings));
+  }, [bookings]);
 
   const login = (email: string, password?: string): { success: boolean; message?: string } => {
     // 1. Check for SPECIAL ADMIN CREDENTIALS
@@ -77,7 +90,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const knownUsers: AuthUser[] = [
-      { id: 'u1', name: 'Sarah Johnson', email: 'alice@student.test', role: 'student', points: 245, status: 'active', university: 'State University' },
       { id: 'u2', name: 'Bob Jones', email: 'bob@student.test', role: 'student', points: 20, status: 'active', university: 'Tech Institute' },
       { id: 'u3', name: 'Dr. Carol', email: 'carol@instructor.test', role: 'instructor', points: 500, status: 'active' },
       { id: 'u5', name: 'Recp Eve', email: 'eve@reception.test', role: 'receptionist', points: 0, status: 'active' },
@@ -167,12 +179,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updatePoints = (newPoints: number) => {
     if (user) {
-      setUser({ ...user, points: newPoints });
+      const updated = { ...user, points: newPoints };
+      setUser(updated);
+      setPersistedPoints(user.email, newPoints);
     }
   };
 
+  const addBooking = (bookingData: Omit<Booking, 'id'>) => {
+    const newBooking: Booking = {
+      ...bookingData,
+      id: `b-${Date.now()}`,
+    };
+    setBookings(prev => [newBooking, ...prev]);
+  };
+
+  const createReceptionist = (name: string, email: string) => {
+    const newUser: AuthUser = {
+      id: `recp-${Date.now()}`,
+      name,
+      email,
+      role: 'receptionist',
+      points: 0,
+      status: 'active',
+    };
+    const existing = getSignedUpUsers();
+    existing.push(newUser);
+    localStorage.setItem('studyspace_registered_users', JSON.stringify(existing));
+    setPersistedPoints(email, 0);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, updatePoints, approveUser, deleteUser, bonusAwarded }}>
+    <AuthContext.Provider value={{ 
+      user, bookings, login, signup, logout, updatePoints, 
+      addBooking, approveUser, deleteUser, createReceptionist, bonusAwarded 
+    }}>
       {children}
     </AuthContext.Provider>
   );

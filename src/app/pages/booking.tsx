@@ -33,7 +33,7 @@ export function BookingPage() {
   const [selectedRoom, setSelectedRoom] = useState<typeof mockRooms[0] | null>(null);
   const [payWithPoints, setPayWithPoints] = useState(false);
   const navigate = useNavigate();
-  const { user, updatePoints } = useAuth();
+  const { user, updatePoints, addBooking } = useAuth();
   const { theme } = useTheme();
   const dark = theme === 'dark';
 
@@ -49,11 +49,37 @@ export function BookingPage() {
       return;
     }
     if (payWithPoints && canPayWithPoints) {
-      updatePoints(user.points - pointsCost);
-      alert(`✅ Booking confirmed! 200 points deducted. Remaining: ${user.points - pointsCost} pts`);
-      navigate('/student');
+      const newPoints = user.points - pointsCost;
+      updatePoints(newPoints);
+      
+      // Save the booking
+      addBooking({
+        roomId: selectedRoom.id,
+        roomName: selectedRoom.name,
+        userId: user.id,
+        userName: user.name,
+        date: selectedDate,
+        timeSlot: selectedTime,
+        status: 'confirmed',
+        paid: true,
+        amount: 0,
+        qrCode: `QR-BP-${Date.now()}`
+      });
+
+      alert(`✅ Booking confirmed! 200 points deducted. Remaining: ${newPoints} pts`);
+      const dashboardUrl = user.role === 'student' ? '/student' : '/instructor';
+      navigate(dashboardUrl);
     } else {
-      navigate('/payment');
+      // For real payment, we'll handle it in the next step, but let's pass state
+      navigate('/payment', { 
+        state: { 
+          roomId: selectedRoom.id,
+          roomName: selectedRoom.name,
+          date: selectedDate,
+          timeSlot: selectedTime,
+          price: totalPrice
+        } 
+      });
     }
   };
 
@@ -69,7 +95,7 @@ export function BookingPage() {
 
   return (
     <DashboardLayout 
-      userRole="student" 
+      userRole={user.role} 
       userName={user.name}
       userPoints={user.points}
     >
@@ -96,7 +122,7 @@ export function BookingPage() {
                       <span>•</span>
                       <span>{selectedTime}</span>
                       <span>•</span>
-                      <span className="font-semibold text-[#4f46e5]">${totalPrice} (1 hr)</span>
+                      <span className="font-semibold text-[#4f46e5]">{totalPrice} EGP (1 hr)</span>
                     </div>
                   </div>
                 </div>
